@@ -1,5 +1,7 @@
 #include "fixture.hpp"
 
+typedef std::vector<int> VecInt_t;
+
 TEST_F(AlgoTest, TestAllOf)
 {
     auto lambda = [](int i) { return i > 0x01; };
@@ -34,21 +36,21 @@ TEST_F(AlgoTest, TestForEach)
 
 TEST_F(AlgoTest, TestFind)
 {
-    std::vector<int>::iterator it = std::find(v_.begin(), v_.end(), 0x10);
+    VecInt_t::iterator it = std::find(v_.begin(), v_.end(), 0x10);
     EXPECT_EQ(it, v_.end());
 }
 
 TEST_F(AlgoTest, TestFindIf)
 {
     auto lambda = [](int i) { return i > 0x50;};
-    std::vector<int>::iterator it = std::find_if(v_.begin(), v_.end(), lambda);
+    VecInt_t::iterator it = std::find_if(v_.begin(), v_.end(), lambda);
     EXPECT_EQ(*it, 0x55);
 }
 
 TEST_F(AlgoTest, TestFindIfNot)
 {
     auto lambda = [](int i) { return i < 0xF0;};
-    std::vector<int>::iterator it = std::find_if_not(v_.begin(), v_.end(), lambda);
+    VecInt_t::iterator it = std::find_if_not(v_.begin(), v_.end(), lambda);
     EXPECT_EQ(*it, 0xFF);// Surrender at 20. GG!
 }
 
@@ -114,7 +116,7 @@ TEST_F(AlgoTest, TestEqual)
 
 TEST_F(AlgoTest, TestIsPermutation)
 {
-    std::vector<int> v2 = {0x33,0x44,0x00,0x11,0x22};
+    VecInt_t v2 = {0x33,0x44,0x00,0x11,0x22};
     bool result = std::is_permutation(v_.begin(), v_.begin()+5, v2.begin());
     EXPECT_TRUE(result);
 }
@@ -150,8 +152,8 @@ TEST_F(AlgoTest, TestLexCompare)
 
 TEST_F(AlgoTest, TestCopy)
 {
-    std::vector<int> v(3);
-    std::vector<int>::iterator it = std::copy(
+    VecInt_t v(3);
+    VecInt_t::iterator it = std::copy(
         v_.begin(), v_.begin()+3,
         v.begin());
 
@@ -161,8 +163,8 @@ TEST_F(AlgoTest, TestCopy)
 
 TEST_F(AlgoTest, TestCopyN)
 {
-    std::vector<int> v(2);
-    std::vector<int>::iterator it = std::copy_n(
+    VecInt_t v(2);
+    VecInt_t::iterator it = std::copy_n(
         v_.begin(), 2, v.begin());
 
     int sum = *it + *(it - 1);
@@ -172,9 +174,9 @@ TEST_F(AlgoTest, TestCopyN)
 
 TEST_F(AlgoTest, TestCopyIf)
 {
-    std::vector<int> v(3);
+    VecInt_t v(3);
     auto lambda = [](int i) {return i<0x30;};
-    std::vector<int>::iterator it = std::copy_if(
+    VecInt_t::iterator it = std::copy_if(
         v_.begin(), v_.end(),
         v.begin(), lambda);
     EXPECT_EQ(*(it-1), 0x22);//Copy if returns end iterator
@@ -182,8 +184,8 @@ TEST_F(AlgoTest, TestCopyIf)
 
 TEST_F(AlgoTest, TestCopyBackward)
 {
-    std::vector<int> v(16);
-    std::vector<int>::iterator it = std::copy_backward(
+    VecInt_t v(16);
+    VecInt_t::iterator it = std::copy_backward(
         v_.begin(), v_.end(),
         v.end());
 
@@ -192,8 +194,8 @@ TEST_F(AlgoTest, TestCopyBackward)
 
 TEST_F(AlgoTest, TestMove)
 {
-    std::vector<int> v(16);
-    std::vector<int>::iterator it = std::move(
+    VecInt_t v(16);
+    VecInt_t::iterator it = std::move(
         v_.begin(), v_.end(), v.begin());
 
     EXPECT_EQ(*(it-1), 0xFF);
@@ -201,9 +203,83 @@ TEST_F(AlgoTest, TestMove)
 
 TEST_F(AlgoTest, TestMoveBackward)
 {
-    std::vector<int> v(16);
-    std::vector<int>::iterator it = std::move_backward(
+    VecInt_t v(16);
+    VecInt_t::iterator it = std::move_backward(
         v_.begin(), v_.end(), v.end());
 
-    EXPECT_EQ(*(it+1), 0xFF);
+    EXPECT_EQ(*(it+1), 0x11);
+}
+
+TEST_F(AlgoTest, TestSwap)
+{
+    std::swap(v_[0],*(v_.end()-1));
+    EXPECT_EQ(*v_.begin(), 0xFF);
+}
+
+TEST_F(AlgoTest, TestSwapRanges)
+{
+    VecInt_t v(5);
+    VecInt_t::iterator it = std::swap_ranges(
+        v_.begin(), v_.begin()+4, v.begin());
+
+    EXPECT_EQ(*(it-1), 0x33);
+    EXPECT_EQ(*(v_.begin()+3), 0x00);
+}
+
+TEST_F(AlgoTest, TestIterSwap)
+{
+    VecInt_t::iterator it1 = v_.begin(); // Points to 1
+    VecInt_t::iterator it2 = v_.end() - 1; // Points to 4
+    
+    std::iter_swap(it1, it2);
+
+    EXPECT_EQ(*it1, 0xFF);
+}
+
+TEST_F(AlgoTest, TestTransform)
+{
+    
+    VecInt_t v(5);
+    auto lambda = [](int i) {return i << 2;};
+
+    VecInt_t::iterator it = std::transform(
+        v_.begin(), v_.begin()+4,
+        v.begin(), lambda
+    );
+
+    EXPECT_EQ(*(it-1), 0xCC);
+}
+
+TEST_F(AlgoTest, TestReplace)
+{
+    std::replace(str_.begin(), str_.end(),
+    'e','a');
+    EXPECT_EQ(str_[1], 'a');
+}
+
+TEST_F(AlgoTest, TestReplaceIf)
+{
+    auto lambda = [](int i) { return i<0x50; };
+    std::replace_if(v_.begin(), v_.end(),
+    lambda,0x100);
+    EXPECT_EQ(v_[0], 0x100);
+}
+
+TEST_F(AlgoTest, TestReplaceCopy)
+{
+    std::string s;
+    std::string::iterator it = std::replace_copy(
+        str_.begin(), str_.end(),
+        s.begin(),'e','a');
+    EXPECT_EQ(s[1], 'a');
+}
+
+TEST_F(AlgoTest, TestReplaceCopyIf)
+{
+    auto lambda = [](char c) { return isupper(c);};
+
+    std::string::iterator it = std::replace_copy_if(
+        str_.begin(), str_.end(),
+        str_.begin(),lambda, ' ');
+    EXPECT_EQ(str_, " eeny  eeny");
 }
