@@ -283,3 +283,67 @@ TEST_F(AlgoTest, TestReplaceCopyIf)
         str_.begin(),lambda, ' ');
     EXPECT_EQ(str_, " eeny  eeny");
 }
+
+TEST_F(AlgoTest, TestFill)
+{
+    std::fill(v_.begin(),v_.end(), 0xFF);
+    auto lambda = [](int i) { return i==0xFF;};
+
+    bool result = std::all_of(v_.begin(),v_.end(),lambda);
+    EXPECT_TRUE(result);
+}
+
+TEST_F(AlgoTest, TestFillN)
+{
+    std::fill_n(v_.begin(), 4,0xFF);
+    auto lambda = [](int i) { return i==0xFF;};
+    int count=std::count(v_.begin(),v_.end(),0xFF);
+    EXPECT_EQ(count,5);
+}
+
+TEST_F(AlgoTest, TestGenerate)
+{
+    
+    std::generate(v_.begin(),v_.end(), [](){
+        // This is a random generator function
+        return 0xFF;
+    });
+
+    auto lambda = [](int i) { return i==0xFF;};
+
+    bool result = std::all_of(v_.begin(),v_.end(),lambda);
+    EXPECT_TRUE(result);
+}
+
+TEST_F(AlgoTest, TestGenerateN)
+{
+    std::generate_n(v_.begin(), 4,[](){
+        return 0xFF;
+    });
+    auto lambda = [](int i) { return i==0xFF;};
+    int count=std::count(v_.begin(),v_.end(),0xFF);
+    EXPECT_EQ(count,5);
+}
+
+TEST_F(AlgoTest, TestRemove)
+{
+    std::string::iterator it = std::remove(
+        str_.begin(), str_.end(),'e'
+    );
+
+    EXPECT_EQ(str_, "Tny Wny");
+}
+
+TEST_F(AlgoTest, TestRemoveIf)
+{
+    std::string s = str_;
+    auto lambda = [s](char c){
+        return std::count(s.begin(),s.end(),c)<2;
+    };
+
+    std::string::iterator it = std::remove_if(
+        str_.begin(), str_.end(),lambda
+    );
+
+    EXPECT_EQ(str_, "eenyeeny");
+}
