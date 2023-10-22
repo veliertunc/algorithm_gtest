@@ -331,7 +331,7 @@ TEST_F(AlgoTest, TestRemove)
         str_.begin(), str_.end(),'e'
     );
 
-    EXPECT_EQ(str_, "Tny Wny");
+    EXPECT_EQ(str_, "Tny Wnyeeny");
 }
 
 TEST_F(AlgoTest, TestRemoveIf)
@@ -345,5 +345,69 @@ TEST_F(AlgoTest, TestRemoveIf)
         str_.begin(), str_.end(),lambda
     );
 
-    EXPECT_EQ(str_, "eenyeeny");
+    EXPECT_EQ(str_, "eenyeenyeny");
+}
+
+TEST_F(AlgoTest, TestRemoveCopy)
+{
+    VecInt_t res(16);
+    VecInt_t::iterator it = std::remove_copy(
+        v_.begin(),v_.end(),res.begin(),0xFF
+    );
+    
+    EXPECT_EQ(*(res.end()-1), 0x00);
+}
+
+TEST_F(AlgoTest, TestRemoveCopyIf)
+{
+    VecInt_t res(16);
+    auto lambda = [](int i) { return i%2!=0; };
+
+    VecInt_t::iterator it = std::remove_copy_if(
+        v_.begin(),v_.end(),res.begin(),lambda
+    );
+    int zeroCnt = std::count(
+        res.begin(),res.end(), 0x00
+    );
+
+    EXPECT_GE(zeroCnt, 0x05);
+}
+
+TEST_F(AlgoTest, TestUnique)
+{
+    VecInt_t v {1,2,2,3,3,3,4,4,4,4};
+    VecInt_t res {1,2,3,4,3,3,4,4,4,4};
+    VecInt_t::iterator it = std::unique(v.begin(),v.end());
+    EXPECT_EQ(v,res);    
+}
+
+TEST_F(AlgoTest, TestUniqueCopy)
+{
+    VecInt_t v {1,2,2,3,3,3,4,4,4,4};
+    VecInt_t res(10);
+    const VecInt_t r {1,2,3,4,0,0,0,0,0,0};
+    VecInt_t::iterator it = std::unique_copy(
+        v.begin(),v.end(), res.begin()
+    );
+    EXPECT_EQ(r,res);
+}
+
+TEST_F(AlgoTest, TestReverse)
+{
+    VecInt_t v {1,2,3,4};
+    VecInt_t res {4,3,2,1};
+    std::reverse(v.begin(),v.end());
+    EXPECT_EQ(v,res);    
+}
+
+TEST_F(AlgoTest, TestReverseCopy)
+{
+    VecInt_t v {1,2,3,4};
+    VecInt_t res(4);
+    const VecInt_t r{4,3,2,1};
+    VecInt_t::iterator it = std::reverse_copy(
+        v.begin(),v.end(),res.begin()
+    );
+
+    EXPECT_EQ(r,res);
 }

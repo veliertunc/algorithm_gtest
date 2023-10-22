@@ -14,6 +14,6 @@ protected:
     }
 
     std::vector<int> v_;
-    std::string str_ = "Teeny Weeny";
+    std::string str_;
 };
 
