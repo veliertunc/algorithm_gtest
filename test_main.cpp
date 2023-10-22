@@ -411,3 +411,81 @@ TEST_F(AlgoTest, TestReverseCopy)
 
     EXPECT_EQ(r,res);
 }
+
+TEST_F(AlgoTest, TestRotate)
+{
+    VecInt_t v {1,2,3,4};
+    VecInt_t res {3,4,1,2};
+    VecInt_t::iterator it = v.begin()+2;
+    std::rotate(v.begin(),it,v.end());
+    EXPECT_EQ(v,res);    
+}
+
+TEST_F(AlgoTest, TestRotateCopy)
+{
+    std::vector<int> v{ 1, 2, 3, 4 };
+    std::vector<int> res(4);std::vector<int>::iterator it1 = v.begin() + 2;
+    const VecInt_t r{3,4,1,2};
+    std::vector<int>::iterator it2 = std::rotate_copy(
+        v.begin(), it1, v.end(), res.begin()
+    );
+
+    EXPECT_EQ(r,res);
+}
+
+TEST_F(AlgoTest, TestIsPartitioned)
+{
+    VecInt_t v {1,3,5,2,4,6};
+    auto lambda = [](int i){return i%2!=0;};
+    bool res = std::is_partitioned(
+        v.begin(), v.end(),lambda
+    );
+    EXPECT_TRUE(res);
+
+    res = std::is_partitioned(
+        v_.begin(), v_.end(),lambda
+    );
+    EXPECT_FALSE(res);
+}
+
+TEST_F(AlgoTest, TestPartition)
+{
+    auto lambda = [](int i){return i%2!=0;};
+    VecInt_t::iterator it = std::partition(
+        v_.begin(),v_.end(),lambda
+    );
+}
+
+TEST_F(AlgoTest, TestStablePartition)
+{
+    auto lambda = [](int i){return i%2!=0;};
+    VecInt_t::iterator it = std::stable_partition(
+        v_.begin(),v_.end(),lambda
+    );
+    const VecInt_t r{
+        0x11,0x33,0x55,0x077,0x99,0xBB,0xDD,0xFF,
+        0x00,0x22,0x44,0x66,0x88,0xAA,0xCC,0xEE
+    };
+    EXPECT_EQ(v_,r);
+}
+
+TEST_F(AlgoTest, TestSort)
+{
+    std::vector<int> v{ 5, 3, 4, 2, 1 };
+    std::sort(v.begin(), v.end());
+    const VecInt_t r{1,2,3,4,5};
+    EXPECT_EQ(v,r);
+}
+
+TEST_F(AlgoTest, TestStableSort)
+{
+    std::vector<int> v{ 5, 3,1, 4, 2, 1 };
+    std::stable_sort(v.begin(), v.end());
+    const VecInt_t r{1,1,2,3,4,5};
+    EXPECT_EQ(v,r);
+}
+
+TEST_F(AlgoTest, TestIsSorted)
+{
+    EXPECT_TRUE(std::is_sorted(v_.begin(),v_.end()));
+}
