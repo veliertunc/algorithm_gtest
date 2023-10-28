@@ -1,7 +1,5 @@
 #include "fixture.hpp"
 
-typedef std::vector<int> VecInt_t;
-
 TEST_F(AlgoTest, TestAllOf)
 {
     auto lambda = [](int i) { return i > 0x01; };
@@ -423,8 +421,8 @@ TEST_F(AlgoTest, TestRotate)
 
 TEST_F(AlgoTest, TestRotateCopy)
 {
-    std::vector<int> v{ 1, 2, 3, 4 };
-    std::vector<int> res(4);std::vector<int>::iterator it1 = v.begin() + 2;
+    VecInt_t v{ 1, 2, 3, 4 };
+    VecInt_t res(4);std::vector<int>::iterator it1 = v.begin() + 2;
     const VecInt_t r{3,4,1,2};
     std::vector<int>::iterator it2 = std::rotate_copy(
         v.begin(), it1, v.end(), res.begin()
@@ -471,7 +469,7 @@ TEST_F(AlgoTest, TestStablePartition)
 
 TEST_F(AlgoTest, TestSort)
 {
-    std::vector<int> v{ 5, 3, 4, 2, 1 };
+    VecInt_t v{ 5, 3, 4, 2, 1 };
     std::sort(v.begin(), v.end());
     const VecInt_t r{1,2,3,4,5};
     EXPECT_EQ(v,r);
@@ -479,7 +477,7 @@ TEST_F(AlgoTest, TestSort)
 
 TEST_F(AlgoTest, TestStableSort)
 {
-    std::vector<int> v{ 5, 3,1, 4, 2, 1 };
+    VecInt_t v{ 5, 3,1, 4, 2, 1 };
     std::stable_sort(v.begin(), v.end());
     const VecInt_t r{1,1,2,3,4,5};
     EXPECT_EQ(v,r);
@@ -488,4 +486,51 @@ TEST_F(AlgoTest, TestStableSort)
 TEST_F(AlgoTest, TestIsSorted)
 {
     EXPECT_TRUE(std::is_sorted(v_.begin(),v_.end()));
+}
+
+TEST_F(AlgoTest, TestLowerBound)
+{
+    VecInt_t v{ 3, 3, 4, 4, 4, 5, 7 };
+    VecInt_t::iterator it = std::lower_bound(v.begin(), v.end(), 4);
+    EXPECT_EQ(it, v.begin()+2);
+}
+
+TEST_F(AlgoTest, TestUpperBound)
+{
+    VecInt_t v{ 3, 3, 4, 4, 4, 5, 7 };
+    VecInt_t::iterator it = std::upper_bound(v.begin(), v.end(), 4);
+    EXPECT_EQ(it, v.begin()+5);
+}
+
+TEST_F(AlgoTest, TestBinarySearch)
+{
+    VecInt_t v{ 3, 3, 4, 4, 4, 5, 7 };
+    //Binary search needs a sorted range
+    bool result = std::binary_search(v.begin(), v.end(), 2);
+    EXPECT_FALSE(result);
+}
+
+TEST_F(AlgoTest, TestMerge)
+{
+    VecInt_t v1{ 1, 3, 5, 9 };
+    VecInt_t v2{ 2, 4, 6, 7 };
+    VecInt_t res(8);
+    std::vector<int>::iterator it = std::merge(
+        v1.begin(), v1.end(), 
+        v2.begin(), v2.end(),
+        res.begin()
+    ); // res is { 1, 2, 3, 4, 5, 6, 7, 9 }
+    // 'it' points to the element after 9 in res
+    const VecInt_t r{1,2,3,4,5,6,7,9};
+    EXPECT_EQ(res,r);
+}
+
+TEST_F(AlgoTest, TestIncludes)
+{
+    std::string s = "een";
+    bool result = std::includes(
+        str_.begin(), str_.end(),
+        s.begin(),s.end()
+    );
+    EXPECT_TRUE(result);
 }

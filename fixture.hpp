@@ -4,6 +4,7 @@
 
 #include <gtest/gtest.h>
 
+typedef std::vector<int> VecInt_t;
 class AlgoTest: public ::testing::Test
 {
 protected:
@@ -13,7 +14,7 @@ protected:
         str_ = "Teeny Weeny";  
     }
 
-    std::vector<int> v_;
+   VecInt_t v_;
     std::string str_;
 };
 
