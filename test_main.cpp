@@ -534,3 +534,30 @@ TEST_F(AlgoTest, TestIncludes)
     );
     EXPECT_TRUE(result);
 }
+
+TEST_F(AlgoTest, TestMakeHeap)
+{
+    VecInt_t v{ 1, 2, 3, 4 };
+
+    std::make_heap(v.begin(),v.end());
+
+    const VecInt_t r{4,2,3,1};
+    EXPECT_EQ(v,r);
+}
+
+TEST_F(AlgoTest, TestPushHeap)
+{
+    VecInt_t v{ 4, 3, 2, 1 };
+    v.push_back(5);
+    std::push_heap(v.begin(), v.end());
+    const VecInt_t r{5,4,2,1,3};
+    EXPECT_EQ(v,r);
+}
+
+TEST_F(AlgoTest, TestPopHeap)
+{
+    VecInt_t v{ 5, 4, 2, 3, 1 };
+    std::pop_heap(v.begin(), v.end());
+    const VecInt_t r{4,3,2,1,5};
+    EXPECT_EQ(v,r);
+}
